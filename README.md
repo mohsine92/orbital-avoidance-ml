@@ -102,8 +102,14 @@ R² = -0.034 à -1.855 signifie que les modèles fonctionnent moins bien que de 
 ## Graphiques et Analyse
 
 - **[Analyse des Prédictions](results/prediction_analysis.png)** - Distribution d'erreur et précision
+  <img width="2100" height="1800" alt="prediction_analysis" src="https://github.com/user-attachments/assets/9226e0d0-b127-4b5c-9aad-3a7ab577fbbe" />
+
 - **[Comparaison de Modèles](results/comparison_ml_vs_opt.png)** - ML vs Optimisation Classique
+  <img width="2100" height="750" alt="comparison_ml_vs_opt" src="https://github.com/user-attachments/assets/b1ab54ea-5c88-4ac3-9107-a63c8ab2c696" />
+
 - **[Données de Performance](results/model_comparison.csv)** - CSV des métriques complètes
+  
+
 
 ## Fonctionnalités
 
