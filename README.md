@@ -1,8 +1,32 @@
 # Manœuvres d'Évitement Orbital basées sur le ML
 
-**Projet Capstone :** Spécialisation Mathématiques pour Ingénieurs - Coursera
+**Projet de fin d'étude à la certification :** Spécialisation Mathématiques pour Ingénieurs - Hong Kong University of Science and Technology
 
-Prédiction de manœuvres d'évitement de collisions satellitaires utilisant l'apprentissage supervisé sous incertitude de capteur optique.
+## À Propos du Projet
+
+### Le Problème
+
+Les satellites en orbite risquent de collisionner avec d'autres débris spatiaux ou satellites. Détecter le risque rapidement et décider d'une manœuvre d'évitement est critique. Les méthodes d'optimisation classiques prennent trop de temps (~2 secondes) pour les systèmes autonomes.
+
+### La Solution
+
+Ce projet entraîne des modèles de **machine learning** pour :
+
+- **Prédire** les manœuvres d'évitement optimales en **2.44 ms** (au lieu de 2000 ms)
+- **Opérer sous incertitude** avec données bruitées de capteurs optiques
+- **Généraliser** à différents scénarios orbitaux
+
+### Les Données
+
+- **5000 scénarios** orbitaux réalistes générés
+- **Chaque scénario** : position et vitesse d'un satellite, détectés avec bruit capteur (σ = 0.5 km / 5 m·s⁻¹)
+- **Objectif** : 3 manœuvres de sortie (ΔVx, ΔVy) optimisées par rapport à une fonction coût
+
+### Les Modèles Testés
+
+- **Gradient Boosting** ← Best (11.09 m/s d'erreur, 2.44 ms)
+- **MLP (Perceptron)** (67.74 m/s d'erreur, 0.85 ms - trop rapide, pas assez précis)
+- **Random Forest** (28.90 m/s d'erreur, 133 ms - trop lent)
 
 ## Démarrage Rapide
 
