@@ -268,8 +268,7 @@ Ce capstone intègre :
 
 ## Auteur
 
-Équipe ML d'Évitement Orbital | Projet Capstone, Mars 2026
-Spécialisation Mathématiques pour Ingénieurs - Coursera
+Mohsine ESSAT
 
 ## Licence
 
