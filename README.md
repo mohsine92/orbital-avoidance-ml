@@ -261,9 +261,7 @@ This capstone integrates:
 - Applied mathematics in aerospace engineering
 
 ## Author
-
-Orbital Avoidance ML Team | Capstone Project, March 2026
-Mathematics for Engineers Specialization - Coursera
+Mohsine ESSAT
 
 ## License
 
