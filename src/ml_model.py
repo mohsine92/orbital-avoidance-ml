@@ -1,12 +1,5 @@
-"""
-Module de machine learning pour la prédiction de manœuvres d'évitement
 
-Ce module contient les fonctions pour :
-- Entraîner des modèles de régression
-- Évaluer les performances
-- Sauvegarder/charger les modèles
-- Comparer avec l'optimisation classique
-"""
+# Machine learning module for predicting avoidance maneuvers
 
 import numpy as np
 import pandas as pd
@@ -26,17 +19,10 @@ from .dataset_generator import DatasetGenerator
 
 
 class ManeuverPredictor:
-    """
-    Classe pour prédire les manœuvres d'évitement avec ML
-    """
-    
+
+    #  Classe pour prédire les manœuvres d'évitement avec ML    
     def __init__(self, model_type: str = 'random_forest'):
-        """
-        Initialise le prédicteur
-        
-        Args:
-            model_type: Type de modèle ('random_forest', 'gradient_boosting', 'mlp')
-        """
+
         self.model_type = model_type
         self.model = None
         self.scaler_X = StandardScaler()
@@ -87,18 +73,8 @@ class ManeuverPredictor:
               y_train: np.ndarray,
               X_val: Optional[np.ndarray] = None,
               y_val: Optional[np.ndarray] = None) -> Dict:
-        """
-        Entraîne le modèle
-        
-        Args:
-            X_train: Features d'entraînement [n_samples, n_features]
-            y_train: Labels d'entraînement [n_samples, 2]
-            X_val: Features de validation (optionnel)
-            y_val: Labels de validation (optionnel)
-        
-        Returns:
-            Dictionnaire avec métriques d'entraînement
-        """
+
+       # Entraîne le modèle
         print(f"Entraînement du modèle {self.model_type}...")
         print(f"  Samples train: {len(X_train)}")
         if X_val is not None:
@@ -148,15 +124,8 @@ class ManeuverPredictor:
         return metrics
     
     def predict(self, X: np.ndarray) -> np.ndarray:
-        """
-        Prédit les manœuvres
         
-        Args:
-            X: Features [n_samples, n_features]
-        
-        Returns:
-            Manœuvres prédites [n_samples, 2] [km/s]
-        """
+        # Prédit les manœuvres
         if not self.is_trained:
             raise ValueError("Le modèle n'est pas entraîné!")
         
@@ -167,31 +136,9 @@ class ManeuverPredictor:
         return y_pred
     
     def predict_single(self, features: np.ndarray) -> np.ndarray:
-        """
-        Prédit une seule manœuvre
         
-        Args:
-            features: Features [n_features]
-        
-        Returns:
-            Manœuvre prédite [2] [km/s]
-        """
-        if features.ndim == 1:
-            features = features.reshape(1, -1)
-        
-        return self.predict(features)[0]
-    
-    def evaluate(self, X_test: np.ndarray, y_test: np.ndarray) -> Dict:
-        """
-        Évalue le modèle sur un jeu de test
-        
-        Args:
-            X_test: Features de test
-            y_test: Labels de test
-        
-        Returns:
-            Dictionnaire de métriques
-        """
+        # Prédit une seule manœuvre
+
         # Prédictions
         start_time = time.time()
         y_pred = self.predict(X_test)
@@ -225,14 +172,8 @@ class ManeuverPredictor:
         return metrics
     
     def get_feature_importance(self) -> Optional[np.ndarray]:
-        """
-        Retourne l'importance des features (si le modèle le supporte)
-        
-        Returns:
-            Importance des features ou None
-        """
+
         if self.model_type == 'random_forest' or self.model_type == 'gradient_boosting':
-            # Pour MultiOutputRegressor, moyenne sur les deux sorties
             importances = []
             for estimator in self.model.estimators_:
                 importances.append(estimator.feature_importances_)
@@ -241,7 +182,7 @@ class ManeuverPredictor:
             return None
     
     def save(self, filepath: str):
-        """Sauvegarde le modèle"""
+        # Sauvegarde le modèle
         Path(filepath).parent.mkdir(parents=True, exist_ok=True)
         
         model_data = {
@@ -275,17 +216,8 @@ class ManeuverPredictor:
 def compare_models(dataset: Dict,
                    test_size: float = 0.2,
                    random_state: int = 42) -> pd.DataFrame:
-    """
-    Compare différents modèles de ML
-    
-    Args:
-        dataset: Dataset généré
-        test_size: Proportion du test set
-        random_state: Graine aléatoire
-    
-    Returns:
-        DataFrame avec résultats de comparaison
-    """
+
+    # Compare différents modèles de ML
     X = dataset['X']
     y = dataset['y']
     
@@ -332,17 +264,11 @@ def compare_models(dataset: Dict,
 def analyze_predictions(y_true: np.ndarray,
                         y_pred: np.ndarray,
                         save_path: Optional[str] = None):
-    """
-    Analyse et visualise les prédictions
     
-    Args:
-        y_true: Valeurs vraies [n_samples, 2]
-        y_pred: Valeurs prédites [n_samples, 2]
-        save_path: Chemin de sauvegarde (optionnel)
-    """
+   # Analyse et visualise les prédictions
     fig, axes = plt.subplots(2, 2, figsize=(14, 12))
     
-    # 1. Scatter Δvx
+    # Scatter Δvx
     ax = axes[0, 0]
     ax.scatter(y_true[:, 0]*1000, y_pred[:, 0]*1000, alpha=0.5, s=10)
     lim = max(abs(y_true[:, 0]).max(), abs(y_pred[:, 0]).max()) * 1000
@@ -353,7 +279,7 @@ def analyze_predictions(y_true: np.ndarray,
     ax.legend()
     ax.grid(True, alpha=0.3)
     
-    # 2. Scatter Δvy
+    # Scatter Δvy
     ax = axes[0, 1]
     ax.scatter(y_true[:, 1]*1000, y_pred[:, 1]*1000, alpha=0.5, s=10)
     lim = max(abs(y_true[:, 1]).max(), abs(y_pred[:, 1]).max()) * 1000
@@ -364,7 +290,7 @@ def analyze_predictions(y_true: np.ndarray,
     ax.legend()
     ax.grid(True, alpha=0.3)
     
-    # 3. Distribution des erreurs
+    # Distribution des erreurs
     ax = axes[1, 0]
     errors = np.linalg.norm(y_pred - y_true, axis=1) * 1000  # m/s
     ax.hist(errors, bins=50, edgecolor='black', alpha=0.7)
@@ -378,7 +304,7 @@ def analyze_predictions(y_true: np.ndarray,
     ax.legend()
     ax.grid(True, alpha=0.3)
     
-    # 4. Erreur vs magnitude
+    # Erreur vs magnitude
     ax = axes[1, 1]
     magnitudes_true = np.linalg.norm(y_true, axis=1) * 1000
     ax.scatter(magnitudes_true, errors, alpha=0.5, s=10)
@@ -402,7 +328,7 @@ if __name__ == "__main__":
     print("TEST DU MODULE DE MACHINE LEARNING")
     print("=" * 60)
     
-    # Charger un dataset de test (ou en créer un petit)
+    # Charger un dataset de test
     print("\nGénération d'un dataset de test...")
     
     generator = DatasetGenerator(random_seed=42)
