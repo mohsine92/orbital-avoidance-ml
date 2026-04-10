@@ -1,13 +1,3 @@
-"""
-Script principal pour le projet d'évitement orbital avec ML
-
-Ce script orchestre :
-1. Génération du dataset
-2. Entraînement des modèles
-3. Évaluation et comparaison
-4. Génération des visualisations
-"""
-
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,9 +21,8 @@ from src import (
 def generate_dataset_phase(n_scenarios: int = 5000,
                            output_dir: str = "data",
                            random_seed: int = 42):
-    """
-    Phase 1: Génération du dataset
-    """
+    
+     # Phase 1: Génération du dataset
     print("\n" + "="*80)
     print("PHASE 1: GÉNÉRATION DU DATASET")
     print("="*80)
@@ -63,9 +52,8 @@ def generate_dataset_phase(n_scenarios: int = 5000,
 def train_models_phase(dataset: dict,
                        output_dir: str = "models",
                        test_size: float = 0.2):
-    """
-    Phase 2: Entraînement des modèles
-    """
+   
+   #  Phase 2: Entraînement des modèles
     print("\n" + "="*80)
     print("PHASE 2: ENTRAÎNEMENT DES MODÈLES")
     print("="*80)
@@ -109,9 +97,9 @@ def evaluate_phase(predictor: ManeuverPredictor,
                    X_test: np.ndarray,
                    y_test: np.ndarray,
                    output_dir: str = "results"):
-    """
-    Phase 3: Évaluation détaillée
-    """
+ 
+#    Phase 3: Évaluation détaillée
+
     print("\n" + "="*80)
     print("PHASE 3: ÉVALUATION DÉTAILLÉE")
     print("="*80)
@@ -159,9 +147,9 @@ def evaluate_phase(predictor: ManeuverPredictor,
 
 def comparison_phase(predictor: ManeuverPredictor,
                      output_dir: str = "results"):
-    """
-    Phase 4: Comparaison ML vs Optimisation classique
-    """
+    
+    # Phase 4: Comparaison ML vs Optimisation classique
+    
     print("\n" + "="*80)
     print("PHASE 4: COMPARAISON ML vs OPTIMISATION")
     print("="*80)
