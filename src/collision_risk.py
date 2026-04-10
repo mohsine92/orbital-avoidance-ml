@@ -1,13 +1,4 @@
-"""
-Module d'évaluation du risque de collision entre satellite et débris
-
-Ce module contient les fonctions pour :
-- Calculer la distance minimale d'approche (Closest Approach)
-- Estimer le temps avant collision
-- Évaluer la probabilité de collision sous incertitude
-- Calculer un score de risque
-"""
-
+# Satellite collision risk assessment module
 import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize_scalar
@@ -22,20 +13,17 @@ R_COMBINED = R_SATELLITE + R_DEBRIS  # 15 m = 0.015 km
 
 
 class CollisionRisk:
-    """
-    Classe pour évaluer le risque de collision
-    """
     
+   # Classe pour évaluer le risque de collision
     def __init__(self, 
                  r_combined: float = R_COMBINED,
                  mu: float = MU_EARTH):
-        """
-        Initialise l'évaluateur de risque
         
-        Args:
-            r_combined: Rayon combiné satellite + débris [km]
-            mu: Paramètre gravitationnel [km³/s²]
-        """
+        # Initialise l'évaluateur de risque
+        
+       # Args: r_combined: Rayon combiné satellite + débris [km]
+       #     mu: Paramètre gravitationnel [km³/s²]
+        
         self.r_combined = r_combined
         self.mu = mu
     
@@ -45,19 +33,8 @@ class CollisionRisk:
                                  state_debris: OrbitalState,
                                  sol_sat = None,
                                  sol_debris = None) -> float:
-        """
-        Calcule la distance entre satellite et débris à un instant donné
-        
-        Args:
-            t: Temps [s]
-            state_sat: État initial du satellite
-            state_debris: État initial du débris
-            sol_sat: Solution de propagation du satellite (optionnel)
-            sol_debris: Solution de propagation du débris (optionnel)
-        
-        Returns:
-            Distance [km]
-        """
+       
+       # Calcule la distance entre satellite et débris à un instant donné
         if sol_sat is not None:
             X_sat = sol_sat.sol(t)
         else:
@@ -80,26 +57,8 @@ class CollisionRisk:
                               state_debris: OrbitalState,
                               t_horizon: float,
                               n_samples: int = 100) -> Tuple[float, float, float]:
-        """
-        Trouve le temps et la distance de l'approche la plus rapprochée
-        
-        Méthode:
-        1. Propager les deux orbites sur l'horizon temporel
-        2. Échantillonner la distance à intervalles réguliers
-        3. Affiner avec optimisation locale
-        
-        Args:
-            state_sat: État initial du satellite
-            state_debris: État initial du débris
-            t_horizon: Horizon temporel de recherche [s]
-            n_samples: Nombre d'échantillons pour recherche initiale
-        
-        Returns:
-            Tuple (d_min, t_ca, v_relative)
-            - d_min: Distance minimale [km]
-            - t_ca: Temps de l'approche rapprochée [s]
-            - v_relative: Vitesse relative au moment de l'approche [km/s]
-        """
+    
+        #Trouve le temps et la distance de l'approche la plus rapprochée
         # Propager les deux orbites
         result_sat = propagate_orbit(state_sat, (0, t_horizon), dense_output=True)
         result_debris = propagate_orbit(state_debris, (0, t_horizon), dense_output=True)
@@ -142,24 +101,9 @@ class CollisionRisk:
     def compute_collision_probability(self,
                                       d_min: float,
                                       sigma_d: float) -> float:
-        """
-        Calcule la probabilité de collision basée sur un modèle gaussien
         
-        On modélise la distance minimale comme une variable aléatoire normale:
-        d_min ~ N(μ_d, σ_d²)
+        # Calcule la probabilité de collision basée sur un modèle gaussien
         
-        Probabilité de collision:
-        P_c = P(d_min < r_combined) = Φ((r_combined - μ_d) / σ_d)
-        
-        où Φ est la fonction de répartition de la loi normale standard
-        
-        Args:
-            d_min: Distance minimale moyenne [km]
-            sigma_d: Incertitude sur la distance minimale [km]
-        
-        Returns:
-            Probabilité de collision [0, 1]
-        """
         if sigma_d <= 0:
             # Cas déterministe
             return 1.0 if d_min < self.r_combined else 0.0
@@ -182,22 +126,8 @@ class CollisionRisk:
                                       sigma_vel_debris: float,
                                       t_ca: float,
                                       n_monte_carlo: int = 100) -> float:
-        """
-        Estime l'incertitude sur la distance minimale par Monte Carlo
-        
-        Args:
-            state_sat: État satellite
-            state_debris: État débris
-            sigma_pos_sat: Incertitude position satellite [km]
-            sigma_vel_sat: Incertitude vitesse satellite [km/s]
-            sigma_pos_debris: Incertitude position débris [km]
-            sigma_vel_debris: Incertitude vitesse débris [km/s]
-            t_ca: Temps de l'approche rapprochée [s]
-            n_monte_carlo: Nombre de simulations Monte Carlo
-        
-        Returns:
-            Écart-type de la distance à l'approche rapprochée [km]
-        """
+     
+     #   Estime l'incertitude sur la distance minimale par Monte Carlo
         distances_ca = []
         
         for _ in range(n_monte_carlo):
@@ -234,31 +164,12 @@ class CollisionRisk:
                            v_relative: float,
                            weight_prob: float = 1e6,
                            weight_severity: float = 1e3) -> float:
-        """
-        Calcule un score de risque composite
-        
-        Risk = w_prob * P_collision + w_sev * Severity
-        
-        où Severity dépend de:
-        - Vitesse relative (énergie cinétique de l'impact)
-        - Proximité temporelle de l'événement
-        
-        Args:
-            d_min: Distance minimale [km]
-            sigma_d: Incertitude distance [km]
-            t_ca: Temps avant approche [s]
-            v_relative: Vitesse relative [km/s]
-            weight_prob: Poids de la probabilité de collision
-            weight_severity: Poids de la sévérité
-        
-        Returns:
-            Score de risque (plus élevé = plus dangereux)
-        """
+                               
+        # Calcule un score de risque composite
         # Probabilité de collision
         p_collision = self.compute_collision_probability(d_min, sigma_d)
         
         # Sévérité (proportionnelle à l'énergie cinétique)
-        # E_k ∝ v²
         severity = v_relative**2
         
         # Facteur d'urgence (plus l'approche est proche, plus c'est urgent)
@@ -271,15 +182,8 @@ class CollisionRisk:
         return risk
     
     def classify_risk_level(self, risk_score: float) -> str:
-        """
-        Classifie le niveau de risque
-        
-        Args:
-            risk_score: Score de risque
-        
-        Returns:
-            Niveau de risque: 'CRITIQUE', 'ÉLEVÉ', 'MODÉRÉ', 'FAIBLE', 'NÉGLIGEABLE'
-        """
+    
+        # Classifie le niveau de risque
         if risk_score > 1e5:
             return 'CRITIQUE'
         elif risk_score > 1e4:
@@ -296,18 +200,8 @@ def quick_collision_check(state_sat: OrbitalState,
                           state_debris: OrbitalState,
                           t_horizon: float,
                           r_collision: float = R_COMBINED) -> bool:
-    """
-    Vérification rapide de collision potentielle
-    
-    Args:
-        state_sat: État satellite
-        state_debris: État débris
-        t_horizon: Horizon temporel [s]
-        r_collision: Rayon de collision [km]
-    
-    Returns:
-        True si collision potentielle, False sinon
-    """
+
+    # Vérification rapide de collision potentielle
     risk_eval = CollisionRisk(r_combined=r_collision)
     d_min, _, _ = risk_eval.find_closest_approach(state_sat, state_debris, t_horizon)
     
@@ -315,6 +209,7 @@ def quick_collision_check(state_sat: OrbitalState,
 
 
 if __name__ == "__main__":
+    
     # Test du module
     print("=" * 60)
     print("TEST DU MODULE D'ÉVALUATION DU RISQUE")
