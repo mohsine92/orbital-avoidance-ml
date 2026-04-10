@@ -1,9 +1,6 @@
-"""
-Package orbital_avoidance_ml
 
-Système d'apprentissage supervisé pour manœuvres d'évitement orbital
-"""
 
+# Supervised learning system for orbital avoidance maneuvers
 from .orbital_mechanics import (
     OrbitalState,
     create_circular_orbit,
